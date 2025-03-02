@@ -2,17 +2,7 @@
 export default {
   name: "SearchBar",
   props: {},
-  data() {
-    return {
-      inputValue: "",
-    };
-  },
-  emits: {
-    search: (letter: string) => {
-      console.log("Search letters:", letter);
-      return true;
-    },
-  },
+  emits: ["search"],
   methods: {
     onInput(event: any) {
       this.$emit("search", event.target.value);

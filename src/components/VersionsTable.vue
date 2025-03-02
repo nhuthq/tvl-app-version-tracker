@@ -1,11 +1,13 @@
 <script lang="ts">
 import { ref } from "vue";
 import SearchBar from "./SearchBar.vue";
+import FilterRadios from "./FilterRadios.vue";
 
 const searchLetter = ref("");
+const radioButtonType = ref("All");
 
 export default {
-  components: { SearchBar },
+  components: { SearchBar, FilterRadios },
   name: "VersionsTable",
   props: {
     items: {
@@ -17,16 +19,32 @@ export default {
     handleSearch: (letter: any) => {
       searchLetter.value = letter;
     },
+    handleFilter: (type: any) => {
+      radioButtonType.value = type;
+    },
   },
   computed: {
     filteredItemsByLetter() {
-      if (searchLetter.value !== "") {
-        return this.items.filter((item: any) =>
-          item.status.includes(searchLetter.value)
-        );
-      } else {
-        return this.items;
+      let filteredItems = this.items;
+      switch (radioButtonType.value) {
+        case "Release":
+          filteredItems = filteredItems.filter((item: any) =>
+            item.status.includes("Release")
+          );
+          break;
+        case "All":
+        default:
+          filteredItems = this.items;
+          break;
       }
+
+      if (searchLetter.value !== "") {
+        filteredItems = filteredItems.filter((item: any) =>
+          item.versions.includes(searchLetter.value)
+        );
+      }
+      console.log("item.status", filteredItems);
+      return filteredItems;
     },
   },
 };
@@ -36,6 +54,7 @@ export default {
   <div class="related bg-gray-100 m-8">
     <div class="flex items-center justify-between">
       <SearchBar @search="handleSearch" />
+      <FilterRadios @filterRelease="handleFilter" />
     </div>
     <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-g ray-500 uppercase bg-blue-100">
